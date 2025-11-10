@@ -1,0 +1,60 @@
+name: ecommerce_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  firebase_core: ^4.2.0
+  flutter_native_splash: ^2.4.0 
+  firebase_auth: ^6.1.1
+  cloud_firestore: ^6.0.3
+  provider: ^6.1.5+1
+  intl: ^0.20.2
+  google_fonts: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+
+# Flutter configuration section
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+# Flutter native splash configuration - MUST BE AT ROOT LEVEL
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/images/comick-logo.png
+  android_12:
+    color: "#FFFFFF"
+    image: assets/images/comick-logo.png
+  web: true
+
+# Flutter launcher icons configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/comick-logo.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/images/comick-logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+  windows:
+    generate: true
+    image_path: "assets/images/comick-logo.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/images/comick-logo.png"
