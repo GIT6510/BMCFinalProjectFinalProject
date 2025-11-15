@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "518287408089",
-    "project_id": "my-ecommerce-app-091405",
-    "storage_bucket": "my-ecommerce-app-091405.firebasestorage.app"
+    "project_number": "661938581763",
+    "project_id": "my-ecommerce-app-kengiray",
+    "storage_bucket": "my-ecommerce-app-kengiray.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:518287408089:android:b193abb9da66f67bc237c8",
+        "mobilesdk_app_id": "1:661938581763:android:d71a0e87f75ecfa1c47936",
         "android_client_info": {
-          "package_name": "com.example.ecommerce_app"
+          "package_name": "com.comick.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAJkiydF4nkVUjDZDMxP8-Q1xnBFaoSkVc"
+          "current_key": "AIzaSyDSsNEqnGjM25sWr_bBvvJpEV13_ihKt1Q"
         }
       ],
       "services": {
