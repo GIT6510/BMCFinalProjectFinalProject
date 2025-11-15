@@ -2,52 +2,68 @@ import 'package:ecommerce_app/providers/cart_provider.dart'; // 1. Need this
 import 'package:ecommerce_app/screens/auth_wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart'; // 2. Need this
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart'; // 1. ADD THIS IMPORT
 
-
+// --- COLLECTIBLES & MEMORABILIA COLOR PALETTE ---
 const Color kHeritageNavy = Color(0xFF1C2B3C,);
 const Color kSkyblue = Color(0xFF87CEEB); 
 const Color kArchivalCream = Color(0xFFF8F4EF,);
 const Color kCharcoalGray = Color(0xFFA09F9F);
 const Color kBurgundy = Color(0xFF0000FF);
+// --- END OF COLOR PALETTE ---
 
 void main() async {
   // 1. Preserve splash screen (Unchanged)
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // 2. Initialize Firebase (Unchanged)
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // 2. Initialize Firebase with error handling so failure doesn't prevent runApp
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    
+    debugPrint('Firebase.initializeApp completed successfully');
+  } catch (e, st) {
+    debugPrint('Firebase.initializeApp error: $e');
+    debugPrint('$st');
+  }
 
-  // 3. Set web persistence (Unchanged)
-  await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-
-  // 4. --- DEFER CART PROVIDER INITIALIZATION ---
+  // 4. --- THIS IS THE FIX ---
   // We manually create the CartProvider instance *before* runApp
   final cartProvider = CartProvider();
 
-  // 5. Remove splash screen (Unchanged)
-  FlutterNativeSplash.remove();
+  // 5. We call our new initialize method *before* runApp
+  cartProvider.initializeAuthListener();
 
-  // 6. This is the NEW code for runApp
+  // 7. This is the NEW code for runApp
   runApp(
-    // 7. We use ChangeNotifierProvider.value
+    // 8. We use ChangeNotifierProvider.value
     ChangeNotifierProvider.value(
-      value: cartProvider, // 8. We provide the instance we already created
+      value: cartProvider, // 9. We provide the instance we already created
       child: const MyApp(),
     ),
   );
 
-  // 9. Defer auth listener initialization after runApp to avoid blocking UI thread
+  // 3. Set web persistence only on web (avoid calling on mobile)
+  if (kIsWeb) {
+    try {
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      debugPrint('FirebaseAuth persistence set to LOCAL (web)');
+    } catch (e) {
+      debugPrint('Error setting FirebaseAuth persistence: $e');
+    }
+  }
+
+  // Remove native splash after first frame so the app has painted
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    cartProvider.initializeAuthListener();
+    FlutterNativeSplash.remove();
   });
 
-  // 10. This is the old, buggy code we are replacing:
+  // 6. This is the old, buggy code we are replacing:
   /*
   runApp(
     ChangeNotifierProvider(
@@ -81,6 +97,7 @@ class MyApp extends StatelessWidget {
           background: kArchivalCream, // Our new app background
         ),
         useMaterial3: true,
+
 
         // 3. Set the background color for all screens
         scaffoldBackgroundColor: kArchivalCream,

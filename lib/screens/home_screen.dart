@@ -238,9 +238,15 @@ class _HomeScreenState extends State<HomeScreen> {
               final productData = productDoc.data() as Map<String, dynamic>;
               
               // 3. Find your old ProductCard
+              // Safely parse price (may be int or double in Firestore)
+              final dynamic priceRaw = productData['price'];
+              final double price = priceRaw is num
+                  ? priceRaw.toDouble()
+                  : double.tryParse(priceRaw?.toString() ?? '') ?? 0.0;
+
               return ProductCard(
                 productName: productData['name'],
-                price: productData['price'],
+                price: price,
                 imageUrl: productData['imageUrl'],
                 
                 // 4. --- THIS IS THE NEW PART ---
@@ -309,4 +315,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

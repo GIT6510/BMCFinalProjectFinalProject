@@ -126,7 +126,11 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                   : 'No date';
               
               final String status = orderData['status'] ?? 'Unknown';
-              final double totalPrice = (orderData['totalPrice'] ?? 0.0) as double;
+                // Safely parse totalPrice which may be int or double in Firestore
+                final dynamic tpRaw = orderData['totalPrice'];
+                final double totalPrice = tpRaw is num
+                  ? tpRaw.toDouble()
+                  : double.tryParse(tpRaw?.toString() ?? '') ?? 0.0;
               final String formattedTotal = '₱${totalPrice.toStringAsFixed(2)}';
               final String userId = orderData['userId'] ?? 'Unknown User';
               // --- END OF NULL-SAFE DATA HANDLING ---
@@ -141,7 +145,7 @@ class _AdminOrderScreenState extends State<AdminOrderScreen> {
                   ),
                   subtitle: Text(
                     'User: ${orderData['userId']}\n'
-                    'Total: ₱${(orderData['totalPrice']).toStringAsFixed(2)} | Date: $formattedDate',
+                     'Total: $formattedTotal | Date: $formattedDate',
                     style: TextStyle(color: Colors.black)
                   ),
                   isThreeLine: true,

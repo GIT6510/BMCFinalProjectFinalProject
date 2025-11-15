@@ -25,6 +25,12 @@ class OrderCard extends StatelessWidget {
     }
 
     // 5. Use a Card for a nice UI
+    // Safely parse totalPrice which may be int or double in Firestore
+    final dynamic tpRaw = orderData['totalPrice'];
+    final double totalPrice = tpRaw is num
+      ? tpRaw.toDouble()
+      : double.tryParse(tpRaw?.toString() ?? '') ?? 0.0;
+    final String formattedTotal = totalPrice.toStringAsFixed(2);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 3,
@@ -34,7 +40,7 @@ class OrderCard extends StatelessWidget {
         child: ListTile(
           // 7. Title: Total Price
           title: Text(
-            'Total: ₱${(orderData['totalPrice'] as double).toStringAsFixed(2)}',
+            'Total: ₱$formattedTotal',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black),
           ),
 

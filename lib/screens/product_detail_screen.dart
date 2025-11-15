@@ -48,7 +48,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final String name = widget.productData['name'];
     final String description = widget.productData['description'];
     final String imageUrl = widget.productData['imageUrl'];
-    final double price = widget.productData['price'];
+    final dynamic priceRaw = widget.productData['price'];
+    final double price = priceRaw is num
+      ? priceRaw.toDouble()
+      : double.tryParse(priceRaw?.toString() ?? '') ?? 0.0;
 
     // 2. Get the CartProvider (same as before)
     final cart = Provider.of<CartProvider>(context, listen: false);

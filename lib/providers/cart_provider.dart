@@ -32,7 +32,7 @@ class CartItem {
     return CartItem(
       id: json['id'],
       name: json['name'],
-      price: json['price'],
+      price: (json['price'] is num) ? (json['price'] as num).toDouble() : double.tryParse(json['price']?.toString() ?? '') ?? 0.0,
       quantity: json['quantity'],
     );
   }
@@ -103,23 +103,26 @@ class CartProvider with ChangeNotifier {
 
   // 2. ADD this new EMPTY constructor.
   CartProvider() {
-    print('CartProvider created.');
+    debugPrint('CartProvider created at ${DateTime.now().toIso8601String()}');
   }
 
   // 3. ADD this new PUBLIC method. We moved all the logic here.
   void initializeAuthListener() {
-    print('CartProvider auth listener initialized');
+    debugPrint('CartProvider auth listener initialized at ${DateTime.now().toIso8601String()}');
     _authSubscription = _auth.authStateChanges().listen((User? user) {
+      debugPrint('CartProvider auth state change: user=${user?.uid} at ${DateTime.now().toIso8601String()}');
       if (user == null) {
-        print('User logged out, clearing cart.');
+        debugPrint('User logged out, clearing cart.');
         _userId = null;
         _items = []; 
       } else {
-        print('User logged in: ${user.uid}. Fetching cart...');
+        debugPrint('User logged in: ${user.uid}. Fetching cart...');
         _userId = user.uid;
         _fetchCart(); 
       }
       notifyListeners();
+    }, onError: (e) {
+      debugPrint('CartProvider auth listener error: $e');
     });
   }
   // --- END OF FIX ---
@@ -139,13 +142,14 @@ class CartProvider with ChangeNotifier {
         // 3. Convert that list of Maps into our List<CartItem>
         //    (This is why we made CartItem.fromJson!)
         _items = cartData.map((item) => CartItem.fromJson(item)).toList();
-        print('Cart fetched successfully: ${_items.length} items');
+        debugPrint('Cart fetched successfully: ${_items.length} items at ${DateTime.now().toIso8601String()}');
       } else {
         // 4. The user has no saved cart, start with an empty one
         _items = [];
+        debugPrint('No saved cart found for user $_userId');
       }
     } catch (e) {
-      print('Error fetching cart: $e');
+      debugPrint('Error fetching cart: $e');
       _items = []; // On error, default to an empty cart
     }
     notifyListeners(); // Update the UI
